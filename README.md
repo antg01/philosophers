@@ -69,7 +69,7 @@
         └─────────────────────────────────────────────────────────┘
 ```
 ### Step-by-step explanations:
-```
+
 1) Program Startup: The program starts by initializing the simulation parameters (number of philosophers, time before death, eating time, etc.).
 
 2) Thread and Fork Initialization: Each philosopher is a thread, and each fork between two philosophers is represented by a mutex to control concurrent access.
@@ -81,6 +81,6 @@
 5) Time to Die Check: Each philosopher has a time_to_die limit. If a philosopher doesn't eat within this limit, they die, and the simulation stops immediately.
 
 6) Simulation End: The simulation stops if a philosopher dies or if all philosophers have eaten the required number of times (if this parameter is provided).
-```
+
 
 This diagram outlines the key steps and interactions between philosopher threads and shared resources (forks) while managing time constraints and synchronization.
