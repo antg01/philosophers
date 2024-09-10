@@ -1,7 +1,7 @@
 # Philosophers
-https://github.com/Jamshidbek2000/philosophers_42/tree/master
-https://github.com/migmanu/philosophers/tree/main
-https://github.com/pasqualerossi/Philosophers/tree/main
+- https://github.com/Jamshidbek2000/philosophers_42/tree/master
+- https://github.com/migmanu/philosophers/tree/main
+- https://github.com/pasqualerossi/Philosophers/tree/main
 ## Conceptual Diagram
 ```
 ┌───────────────────────────────────────────────────────────────────────┐
