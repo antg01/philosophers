@@ -70,17 +70,17 @@
 ```
 ### Step-by-step explanations:
 ```
-    Program Startup: The program starts by initializing the simulation parameters (number of philosophers, time before death, eating time, etc.).
+1) Program Startup: The program starts by initializing the simulation parameters (number of philosophers, time before death, eating time, etc.).
 
-    Thread and Fork Initialization: Each philosopher is a thread, and each fork between two philosophers is represented by a mutex to control concurrent access.
+2) Thread and Fork Initialization: Each philosopher is a thread, and each fork between two philosophers is represented by a mutex to control concurrent access.
 
-    Philosopher Cycle: Each philosopher goes through a cycle of three actions: thinking, eating, and sleeping. They can only eat if they successfully acquire both forks (mutexes) on their left and right.
+3) Philosopher Cycle: Each philosopher goes through a cycle of three actions: thinking, eating, and sleeping. They can only eat if they successfully acquire both forks (mutexes) on their left and right.
 
-    Fork Management: Forks are picked up using mutexes. If a philosopher cannot acquire a fork because a neighbor is using it, they wait until it becomes available.
+4) Fork Management: Forks are picked up using mutexes. If a philosopher cannot acquire a fork because a neighbor is using it, they wait until it becomes available.
 
-    Time to Die Check: Each philosopher has a time_to_die limit. If a philosopher doesn't eat within this limit, they die, and the simulation stops immediately.
+5) Time to Die Check: Each philosopher has a time_to_die limit. If a philosopher doesn't eat within this limit, they die, and the simulation stops immediately.
 
-    Simulation End: The simulation stops if a philosopher dies or if all philosophers have eaten the required number of times (if this parameter is provided).
+6) Simulation End: The simulation stops if a philosopher dies or if all philosophers have eaten the required number of times (if this parameter is provided).
 ```
 
 This diagram outlines the key steps and interactions between philosopher threads and shared resources (forks) while managing time constraints and synchronization.
