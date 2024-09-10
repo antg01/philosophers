@@ -6,7 +6,7 @@
 #    By: angerard <angerard@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/10 11:54:53 by angerard          #+#    #+#              #
-#    Updated: 2024/09/10 12:13:13 by angerard         ###   ########.fr        #
+#    Updated: 2024/09/10 14:06:18 by angerard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,7 +73,7 @@ $(NAME): $(OBJ)
 	done; \
 	printf "\n"; \
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -I./includes; \
-	echo "$(GREEN)Compilation successful!$(NC)"
+	echo "$(GREEN)Program $(NAME) ready!$(NC)"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	@echo "$(YELLOW)Compiling $<...$(NC)"
@@ -91,7 +91,7 @@ clean:
 fclean: clean
 	@echo "$(YELLOW)Full clean of project...$(Magenta)"
 	@rm -f $(NAME) *.o
-	@echo "$(GREEN)Fclean successful!$(NC)"
+	@echo "$(GREEN)fclean successful!$(NC)"
 
 re: fclean all
 
