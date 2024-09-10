@@ -1,7 +1,7 @@
 # Philosophers
 
 ## Conceptual Diagram
-
+```
 ┌───────────────────────────────────────────────────────────────────────┐
 │                          Program Startup                              │
 └───────────────────────────────────────────────────────────────────────┘
@@ -67,7 +67,7 @@
         ┌─────────────────────────────────────────────────────────┐
         │    Simulation ends when a philosopher dies              │
         └─────────────────────────────────────────────────────────┘
-
+```
 ### Step-by-step explanations:
 ```
     Program Startup: The program starts by initializing the simulation parameters (number of philosophers, time before death, eating time, etc.).
