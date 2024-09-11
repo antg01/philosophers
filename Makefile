@@ -6,7 +6,7 @@
 #    By: angerard <angerard@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/10 11:54:53 by angerard          #+#    #+#              #
-#    Updated: 2024/09/10 14:06:18 by angerard         ###   ########.fr        #
+#    Updated: 2024/09/11 09:24:17 by angerard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ CFLAGS = -Wall -Wextra -Werror -Iincludes
 
 SRC_DIR = src
 
-SRC = $(SRC_DIR)/main.c
+SRC = $(SRC_DIR)/main.c $(SRC_DIR)/args_checker.c $(SRC_DIR)/data_init.c $(SRC_DIR)/utils.c
 
 OBJ_DIR = .cache
 
