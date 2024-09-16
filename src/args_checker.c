@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:19:55 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/10 15:50:54 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/16 10:15:17 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	is_positive_int(char *str)
 	return (1);
 }
 
-void	check_philos_nbr(char **argv)
+int	check_philos_nbr(char **argv)
 {
 	int	philos_nbr;
 
@@ -36,7 +36,7 @@ void	check_philos_nbr(char **argv)
 	if (philos_nbr <= 1)
 	{
 		printf("Error: There must be at least two philosophers.\n");
-		exit(EXIT_FAILURE);
+		return (0);
 	}
 	if (philos_nbr > 200)
 	{
@@ -44,16 +44,17 @@ void	check_philos_nbr(char **argv)
 		\nProgram will start shortly...\n");
 		ft_usleep(10000);
 	}
+	return (1);
 }
 
-void	validate_args(int argc, char **argv)
+int	validate_args(int argc, char **argv)
 {
 	int	i;
 
 	if (argc < 5 || argc > 6)
 	{
 		printf("Error: Wrong number of arguments.\n");
-		exit(EXIT_FAILURE);
+		return (0);
 	}
 	i = 1;
 	while (i < argc)
@@ -61,15 +62,18 @@ void	validate_args(int argc, char **argv)
 		if (!is_positive_int(argv[i]))
 		{
 			printf("Error: Argument %d is not a valid positive integer.\n", i);
-			exit(EXIT_FAILURE);
+			return (0);
 		}
 		i++;
 	}
+	return (1);
 }
 
 int	check_args(int argc, char **argv)
 {
-	validate_args(argc, argv);
-	check_philos_nbr(argv);
+	if (!validate_args(argc, argv))
+		return (0);
+	if (!check_philos_nbr(argv))
+		return (0);
 	return (1);
 }

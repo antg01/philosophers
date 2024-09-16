@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 12:07:45 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/11 09:40:01 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/16 12:31:52 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ typedef struct s_philo
 	int				left_fork;
 	int				right_fork;
 	int				meals_eaten;
+	size_t			last_meal_time;
 	pthread_t		thread;
+	struct s_data	*data;
 }					t_philo;
 
 typedef struct s_data
@@ -51,10 +53,24 @@ int					check_args(int argc, char **argv);
 
 // data_init.c
 int					init_data(t_data *data, int argc, char **argv);
+void				free_data(t_data *data);
+
+// routine.c
+void				*philos_routine(void *arg);
+
+// monitoring.c
+void				*monitor_philos(void *arg);
+
+// threads.c
+int					create_philos_threads(t_data *data);
+int					create_monitor_threads(t_data *data,
+						pthread_t *monitor_thread);
+void				join_threads(t_data *data, pthread_t monitor_thread);
 
 // utils.c
 int					ft_atoi(const char *str);
 int					ft_isdigit(int c);
 void				ft_usleep(size_t time);
+size_t				get_time(void);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:15:27 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/11 09:52:03 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/16 10:17:20 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,24 @@ int	initialize_philosophers(t_data *data)
 		i++;
 	}
 	return (0);
+}
+
+void	free_data(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	if (data->forks)
+	{
+		while (i < data->philos_nbr)
+		{
+			pthread_mutex_destroy(&data->forks[i]);
+			i++;
+		}
+		free(data->forks);
+	}
+	if (data->philos)
+		free(data->philos);
 }
 
 int	init_data(t_data *data, int argc, char **argv)
