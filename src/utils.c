@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:25:07 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/10 15:51:34 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/17 10:14:22 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,24 @@ size_t	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	ft_usleep(size_t time)
+void	ft_usleep(size_t time_in_ms)
 {
 	size_t	start;
+	size_t	current_time;
 
 	start = get_time();
-	while ((get_time() - start) < time)
+	while ((current_time = get_time()) != (size_t)-1 && (current_time
+			- start) < time_in_ms)
 	{
-		usleep(200);
+		if (time_in_ms - (current_time - start) > 10)
+		{
+			usleep(1000);
+		}
+		else
+		{
+			usleep(100);
+		}
 	}
-	return ;
 }
 
 int	ft_isdigit(int c)

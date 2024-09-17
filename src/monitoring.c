@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:44:33 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/16 15:57:14 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/17 10:30:24 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void	*monitor_philos(void *arg)
         philos_finished = 0;
 		while (i < data->philos_nbr)
 		{
-			if ((get_time() - data->philos[i].last_meal_time) > (size_t)data->time_to_die)
+			if (data->philos[i].last_meal_time && (get_time() - data->philos[i].last_meal_time) > (size_t)data->time_to_die)
 			{
-				printf("%zu ms: Philosopher %d died\n", get_time(), data->philos[i].id);
+				printf("%zu Philosopher %d died\n", get_time(), data->philos[i].id);
 				return (NULL);
 			}
 			if (data->meals_required != -1 && data->philos[i].meals_eaten >= data->meals_required)
@@ -36,9 +36,10 @@ void	*monitor_philos(void *arg)
 		}
 		if (philos_finished == data->philos_nbr)
         {
+			ft_usleep(200);
             printf("All philosophers have eaten %d meals\n", data->meals_required);
 			return (NULL);
         }
-		ft_usleep(200);
+		ft_usleep(100);
 	}
 }
