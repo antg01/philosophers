@@ -6,12 +6,21 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:25:07 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/17 10:14:22 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/17 16:11:02 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
+/**
+ * Retrieves the current time in milliseconds.
+ * Uses the `gettimeofday` function to obtain the current time in seconds and ms.
+ * Converts the time to milliseconds and returns it.
+ * If `gettimeofday` fails, an error message is printed,
+ * and the function returns -1.
+ *
+ * @return The current time in milliseconds, or (size_t) -1 on failure.
+ */
 size_t	get_time(void)
 {
 	struct timeval	time;
@@ -19,19 +28,28 @@ size_t	get_time(void)
 	if (gettimeofday(&time, NULL) == -1)
 	{
 		printf("Error in time external function!\n");
-		return (0);
+		return ((size_t) - 1);
 	}
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
+/**
+ * Custom implementation of a sleep function that pauses the execution for
+ *  a given time in milliseconds. Continuously checks the current time
+ * to avoid busy waiting and optimizes by using `usleep` for small delays.
+ *
+ * @param time_in_ms The amount of time to sleep in milliseconds.
+ */
 void	ft_usleep(size_t time_in_ms)
 {
 	size_t	start;
 	size_t	current_time;
 
 	start = get_time();
-	while ((current_time = get_time()) != (size_t)-1 && (current_time
-			- start) < time_in_ms)
+	current_time = get_time();
+	if (start == (size_t)-1)
+		return ;
+	while (current_time != (size_t)-1 && (current_time - start) < time_in_ms)
 	{
 		if (time_in_ms - (current_time - start) > 10)
 		{
@@ -41,6 +59,7 @@ void	ft_usleep(size_t time_in_ms)
 		{
 			usleep(100);
 		}
+		current_time = get_time();
 	}
 }
 
