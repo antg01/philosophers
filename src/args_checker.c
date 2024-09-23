@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:19:55 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/17 15:55:12 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:06:32 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
  * @param str The string to check.
  * @return 1 if the string is a positive integer, 0 otherwise.
  */
-int	is_positive_int(char *str)
+static int	is_positive_int(char *str)
 {
 	int	i;
 
@@ -43,7 +43,7 @@ int	is_positive_int(char *str)
  * @param argv Array of command line arguments.
  * @return 1 if the number is valid, 0 otherwise with an error message.
  */
-int	check_philos_nbr(char **argv)
+static int	check_philos_nbr(char **argv)
 {
 	int	philos_nbr;
 
@@ -70,7 +70,7 @@ int	check_philos_nbr(char **argv)
  * @param argv Array of command line arguments.
  * @return 1 if all arguments are valid, 0 otherwise with an error message.
  */
-int	validate_args(int argc, char **argv)
+static int	validate_args(int argc, char **argv)
 {
 	int	i;
 

@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:44:33 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/17 16:13:21 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:11:10 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
  * @param data Pointer to the simulation data structure.
  * @param philos_finished Ptn to the count of philos who have finished eating.
  */
-void	check_philo_state(t_philo *philo, t_data *data, int *philos_finished)
+static void	check_philo_state(t_philo *philo, t_data *data,
+		int *philos_finished)
 {
 	if (philo->last_meal_time && (get_time()
 			- philo->last_meal_time) > (size_t)data->time_to_die)
@@ -47,7 +48,7 @@ void	check_philo_state(t_philo *philo, t_data *data, int *philos_finished)
  *
  * @param data Pointer to the simulation data structure.
  */
-void	check_philosophers(t_data *data)
+static void	check_philosophers(t_data *data)
 {
 	int	i;
 	int	philos_finished;

@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:15:27 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/17 16:02:40 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:07:06 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
  * @param argv Array of command line arguments.
  * @return 0 on success, 1 if any argument is invalid or missing.
  */
-int	assign_args(t_data *data, int argc, char **argv)
+static int	assign_args(t_data *data, int argc, char **argv)
 {
 	data->philos_nbr = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
@@ -57,7 +57,7 @@ int	assign_args(t_data *data, int argc, char **argv)
  * @param data Pointer to the simulation data structure.
  * @return 0 on success, 1 if memory allocation fails.
  */
-int	allocate_memory(t_data *data)
+static int	allocate_memory(t_data *data)
 {
 	data->philos = malloc(sizeof(t_philo) * data->philos_nbr);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->philos_nbr);
@@ -77,7 +77,7 @@ int	allocate_memory(t_data *data)
  * @param data Pointer to the simulation data structure.
  * @return 0 on successful initialization.
  */
-int	initialize_philosophers(t_data *data)
+static int	initialize_philosophers(t_data *data)
 {
 	int	i;
 

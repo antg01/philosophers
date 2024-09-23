@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:41:21 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/17 16:14:41 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:07:49 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
  * @param philo Pointer to the philosopher structure.
  * @param data Pointer to the simulation data structure.
  */
-void	philo_eat(t_philo *philo, t_data *data)
+static void	philo_eat(t_philo *philo, t_data *data)
 {
 	pthread_mutex_lock(&data->forks[philo->left_fork]);
 	printf("%zu %d has taken a fork\n", get_time(), philo->id);
