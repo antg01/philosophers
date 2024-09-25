@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:44:33 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/23 13:11:10 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/25 13:35:42 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,20 @@
 
 /**
  * Checks the state of a philo to determine if they have died or finished eating.
- * If the philo has not eaten within the allowed time, the simulation is ended.
- * If a meal requirement is set and the philo has eaten the required number
- * of meals, the finished philosophers count is incremented.
+ * The fct locks the `philo_mutex` to safely check the philo's last meal time
+ * and meal count. If the philos has not eaten within the allowed
+ * time (time_to_die), the simul is ended. If a meal requirement is set and
+ * the philos has eaten the required number of meals,
+ * the finished philos count is incremented.
  *
  * @param philo Pointer to the philosopher structure.
  * @param data Pointer to the simulation data structure.
- * @param philos_finished Ptn to the count of philos who have finished eating.
+ * @param philos_finished Pnt to the count of philos who have finished eating.
  */
 static void	check_philo_state(t_philo *philo, t_data *data,
 		int *philos_finished)
 {
+	pthread_mutex_lock(&data->philo_mutex);
 	if (philo->last_meal_time && (get_time()
 			- philo->last_meal_time) > (size_t)data->time_to_die)
 	{
@@ -32,12 +35,15 @@ static void	check_philo_state(t_philo *philo, t_data *data,
 		pthread_mutex_lock(&data->simulation_mutex);
 		data->simulation_over = 1;
 		pthread_mutex_unlock(&data->simulation_mutex);
+		pthread_mutex_unlock(&data->philo_mutex);
+		return ;
 	}
 	if (data->meals_required != -1
 		&& philo->meals_eaten >= data->meals_required)
 	{
 		(*philos_finished)++;
 	}
+	pthread_mutex_unlock(&data->philo_mutex);
 }
 
 /**

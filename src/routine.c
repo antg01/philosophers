@@ -6,33 +6,44 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:41:21 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/23 13:07:49 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/25 13:35:27 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
 /**
- * Handles the eating action for a philosopher.
- * The philosopher locks both forks (left and right) before eating.
- * It updates the philo's last meal time and increments the meals eaten count.
- * After eating for the specified duration, the philosopher unlocks both forks.
+ * Handles the eating action for a philo, alternating fork acquisition order
+ * based on the philo's ID. Odd-numbered philos pick up the left fork first,
+ * while even-numbered philos pick up the right fork first. Once both forks are
+ * acquired, the philo starts eating, updates the last meal time, and increments
+ * meals eaten. After eating for the specified duration, both forks are released.
  *
- * @param philo Pointer to the philosopher structure.
+ * @param philo Pointer to the philo structure.
  * @param data Pointer to the simulation data structure.
  */
 static void	philo_eat(t_philo *philo, t_data *data)
 {
-	pthread_mutex_lock(&data->forks[philo->left_fork]);
-	printf("%zu %d has taken a fork\n", get_time(), philo->id);
-	pthread_mutex_lock(&data->forks[philo->right_fork]);
-	printf("%zu %d has taken a fork\n", get_time(), philo->id);
+	if (philo->id % 2 != 0)
+	{
+		pthread_mutex_lock(&data->forks[philo->left_fork]);
+		printf("%zu %d has taken a fork\n", get_time(), philo->id);
+		pthread_mutex_lock(&data->forks[philo->right_fork]);
+		printf("%zu %d has taken a fork\n", get_time(), philo->id);
+	}
+	else
+	{
+		pthread_mutex_lock(&data->forks[philo->right_fork]);
+		printf("%zu %d has taken a fork\n", get_time(), philo->id);
+		pthread_mutex_lock(&data->forks[philo->left_fork]);
+		printf("%zu %d has taken a fork\n", get_time(), philo->id);
+	}
 	philo->last_meal_time = get_time();
 	philo->meals_eaten++;
 	printf("%zu %d is eating\n", get_time(), philo->id);
 	ft_usleep(data->time_to_eat);
-	pthread_mutex_unlock(&data->forks[philo->left_fork]);
 	pthread_mutex_unlock(&data->forks[philo->right_fork]);
+	pthread_mutex_unlock(&data->forks[philo->left_fork]);
 }
 
 /**
@@ -66,9 +77,11 @@ void	*philos_routine(void *arg)
 			&& philo->meals_eaten >= data->meals_required)
 			break ;
 		printf("%zu %d is thinking\n", get_time(), philo->id);
+		ft_usleep(10);
 		philo_eat(philo, data);
 		printf("%zu %d is sleeping\n", get_time(), philo->id);
 		ft_usleep(data->time_to_sleep);
+		// ft_usleep(10);
 	}
 	return (NULL);
 }

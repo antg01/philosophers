@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 12:07:45 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/17 15:22:23 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/25 13:31:50 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_data
 	int				simulation_over;
 	pthread_mutex_t	simulation_mutex;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	philo_mutex;
 	t_philo			*philos;
 }					t_data;
 

@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:15:27 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/23 13:07:06 by angerard         ###   ########.fr       */
+/*   Updated: 2024/09/25 13:32:43 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ static int	initialize_philosophers(t_data *data)
 		data->philos[i].right_fork = (i + 1) % data->philos_nbr;
 		data->philos[i].meals_eaten = 0;
 		pthread_mutex_init(&data->forks[i], NULL);
+		pthread_mutex_init(&data->philo_mutex, NULL);
 		i++;
 	}
 	return (0);
@@ -118,6 +119,7 @@ void	free_data(t_data *data)
 	if (data->philos)
 		free(data->philos);
 	pthread_mutex_destroy(&data->simulation_mutex);
+	pthread_mutex_destroy(&data->philo_mutex);
 }
 
 /**
