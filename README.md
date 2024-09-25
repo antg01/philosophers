@@ -13,6 +13,12 @@ These special cases test the robustness and stability of the program under vario
 - **What should happen**: The program should display an error message indicating that there must be at least 2 philosophers for the simulation to work. It should not attempt to run the simulation.
 
 ---
+### **Test Cases 2:**
+- **Command**: `./philo 1 800 200 200` - Philosopher should not eat and should die.
+- **Command**: `./philo 5 800 200 200` - No Philosopher should die.
+- **Command**: `./philo 5 800 200 200 7`- No Philosopher should die and the simulation should stop when every philosopher has eaten at least 7 times.
+- **Command**: `./philo 4 410 200 200` - No Philosopher should die.
+- **Command**: `./philo 4 310 200 100` - One Philosopher should die.
 
 ### **Special Case 2: One Philosopher**
 - **Command**: `./philo 1 800 200 200`
