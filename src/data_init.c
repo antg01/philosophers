@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:15:27 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/25 13:32:43 by angerard         ###   ########.fr       */
+/*   Updated: 2024/10/03 14:00:43 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	assign_args(t_data *data, int argc, char **argv)
 	if (data->philos_nbr <= 0 || data->time_to_die < 0 || data->time_to_eat < 0
 		|| data->time_to_sleep < 0)
 	{
-		printf("Error: arguments missing.\n");
+		printf("Error: args missing or invalid parameter (max integer).\n");
 		return (1);
 	}
 	if (argc == 6)
