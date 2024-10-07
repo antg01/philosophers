@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:41:21 by angerard          #+#    #+#             */
-/*   Updated: 2024/09/25 13:35:27 by angerard         ###   ########.fr       */
+/*   Updated: 2024/10/07 11:22:19 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,10 @@ static void	philo_eat(t_philo *philo, t_data *data)
 		pthread_mutex_lock(&data->forks[philo->left_fork]);
 		printf("%zu %d has taken a fork\n", get_time(), philo->id);
 	}
+	pthread_mutex_lock(&data->philo_mutex);
 	philo->last_meal_time = get_time();
 	philo->meals_eaten++;
+	pthread_mutex_unlock(&data->philo_mutex);
 	printf("%zu %d is eating\n", get_time(), philo->id);
 	ft_usleep(data->time_to_eat);
 	pthread_mutex_unlock(&data->forks[philo->right_fork]);
