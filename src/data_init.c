@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:15:27 by angerard          #+#    #+#             */
-/*   Updated: 2024/11/25 15:05:33 by angerard         ###   ########.fr       */
+/*   Updated: 2024/11/26 17:26:01 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ static int	allocate_memory(t_data *data)
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->philos_nbr);
 	if (!data->philos || !data->forks)
 	{
+		free(data->philos);
+		free(data->forks);
 		printf("Error: Memory allocation failed.\n");
 		return (1);
 	}

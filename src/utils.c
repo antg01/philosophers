@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:25:07 by angerard          #+#    #+#             */
-/*   Updated: 2024/11/25 15:55:51 by angerard         ###   ########.fr       */
+/*   Updated: 2024/11/26 18:16:20 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,45 +21,46 @@
  *
  * @return The current time in milliseconds, or (size_t) -1 on failure.
  */
-size_t	get_time(void)
+size_t	get_time_timestamp(void)
 {
-	struct timeval	time;
+	struct timeval	current_time;
+	static size_t	start_time = 0;
+	size_t			current_ms;
 
-	if (gettimeofday(&time, NULL) == -1)
+	if (gettimeofday(&current_time, NULL) == -1)
 	{
 		printf("Error in time external function!\n");
 		return ((size_t) - 1);
 	}
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	current_ms = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
+	if (start_time == 0)
+		start_time = current_ms;
+	return (current_ms - start_time);
 }
 
 /**
- * Custom implementation of a sleep function that pauses the execution for
- *  a given time in milliseconds. Continuously checks the current time
- * to avoid busy waiting and optimizes by using `usleep` for small delays.
+ * Custom implementation of a sleep function that pauses execution for
+ * a given amount of time in milliseconds. Uses frequent checks to
+ * ensure minimal delay and accuracy, even for small sleep durations.
  *
  * @param time_in_ms The amount of time to sleep in milliseconds.
  */
 void	ft_usleep(size_t time_in_ms)
 {
-	size_t	start;
+	size_t	start_time;
 	size_t	current_time;
 
-	start = get_time();
-	current_time = get_time();
-	if (start == (size_t)-1)
+	start_time = get_time_timestamp();
+	if (start_time == (size_t) - 1)
 		return ;
-	while (current_time != (size_t)-1 && (current_time - start) < time_in_ms)
+	while (1)
 	{
-		if (time_in_ms - (current_time - start) > 10)
-		{
-			usleep(1000);
-		}
-		else
-		{
-			usleep(100);
-		}
-		current_time = get_time();
+		current_time = get_time_timestamp();
+		if (current_time == (size_t) - 1)
+			break ;
+		if ((current_time - start_time) >= time_in_ms)
+			break ;
+		usleep(100);
 	}
 }
 
@@ -101,8 +102,8 @@ int	ft_atoi(const char *str)
 	{
 		base2 = base;
 		base = 10 * base + (*str - '0');
-		if (base < base2)
-			return (~sign >> 1);
+		if (base < base2 || base * sign > INT_MAX || base * sign < INT_MIN)
+			return (printf("Error: Integer overflow or underflow\n"), 0);
 		str++;
 	}
 	return (base * sign);

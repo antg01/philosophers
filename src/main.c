@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 12:07:21 by angerard          #+#    #+#             */
-/*   Updated: 2024/11/25 15:55:03 by angerard         ###   ########.fr       */
+/*   Updated: 2024/11/26 17:25:25 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,7 @@ void	terminate_simulation(t_data *data, t_philo *philo)
 			i++;
 		}
 	}
-	printf("%zu %d died\n", get_time(), philo->id);
-	free_data(data);
-	exit(1);
+	printf("%zu %d died\n", get_time_timestamp(), philo->id);
 }
 
 /**

@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 12:07:45 by angerard          #+#    #+#             */
-/*   Updated: 2024/11/25 15:57:26 by angerard         ###   ########.fr       */
+/*   Updated: 2024/11/26 17:33:10 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PHILO_H
 
 /* Includes */
+# include <limits.h>
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -41,6 +42,7 @@ typedef struct s_data
 	int				time_to_sleep;
 	int				meals_required;
 	int				simulation_over;
+	int				philos_finished;
 	pthread_mutex_t	simulation_mutex;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	philo_mutex;
@@ -73,5 +75,6 @@ int					ft_isdigit(int c);
 void				ft_usleep(size_t time);
 void				terminate_simulation(t_data *data, t_philo *philo);
 size_t				get_time(void);
+size_t				get_time_timestamp(void);
 
 #endif

@@ -6,7 +6,7 @@
 #    By: angerard <angerard@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/10 11:54:53 by angerard          #+#    #+#              #
-#    Updated: 2024/11/25 15:57:40 by angerard         ###   ########.fr        #
+#    Updated: 2024/11/26 15:14:42 by angerard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,7 +72,7 @@ $(NAME): $(OBJ)
 		sleep 0.01; \
 	done; \
 	printf "\n"; \
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -I./includes ; \
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -I./includes; \
 	echo "$(GREEN)Program $(NAME) ready!$(NC)"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
