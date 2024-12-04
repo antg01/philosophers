@@ -6,83 +6,71 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 10:41:21 by angerard          #+#    #+#             */
-/*   Updated: 2024/11/27 11:10:14 by angerard         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:27:07 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-/**
- * Handles the eating action for a philo, alternating fork acquisition order
- * based on the philo's ID. Odd-numbered philos pick up the left fork first,
- * while even-numbered philos pick up the right fork first. Once both forks are
- * acquired, the philo starts eating, updates the last meal time, and increments
- * meals eaten. After eating for the specified duration,both forks are released.
- *
- * @param philo Pointer to the philo structure.
- * @param data Pointer to the simulation data structure.
- */
-static void	philo_eat(t_philo *philo, t_data *data)
+void	is_thinking(t_philo *philo)
 {
-	if (philo->id % 2 != 0)
+	print_action(philo, "is thinking", NULL);
+}
+
+void	is_sleeping(t_philo *philo)
+{
+	print_action(philo, "is sleeping", DEFAULT);
+	ft_usleep(philo->time_to_sleep);
+	print_action(philo, "finished sleeping", DEFAULT);
+}
+
+void	pick_up_forks(t_philo *philo)
+{
+	if (philo->id % 2 == 0)
 	{
-		pthread_mutex_lock(&data->forks[philo->left_fork]);
-		printf("%zu %d has taken a fork\n", get_time_timestamp(), philo->id);
-		pthread_mutex_lock(&data->forks[philo->right_fork]);
-		printf("%zu %d has taken a fork\n", get_time_timestamp(), philo->id);
+		pthread_mutex_lock(philo->left_fork);
+		print_action(philo, "picked up the left fork", NULL);
+		pthread_mutex_lock(philo->right_fork);
+		print_action(philo, "picked up the right fork", NULL);
 	}
 	else
 	{
-		pthread_mutex_lock(&data->forks[philo->right_fork]);
-		printf("%zu %d has taken a fork\n", get_time_timestamp(), philo->id);
-		pthread_mutex_lock(&data->forks[philo->left_fork]);
-		printf("%zu %d has taken a fork\n", get_time_timestamp(), philo->id);
+		pthread_mutex_lock(philo->right_fork);
+		print_action(philo, "picked up the right fork", NULL);
+		pthread_mutex_lock(philo->left_fork);
+		print_action(philo, "picked up the left fork", NULL);
 	}
-	pthread_mutex_lock(&data->philo_mutex);
-	philo->last_meal_time = get_time_timestamp();
-	philo->meals_eaten++;
-	pthread_mutex_unlock(&data->philo_mutex);
-	printf("%zu %d is eating\n", get_time_timestamp(), philo->id);
-	ft_usleep(data->time_to_eat);
-	pthread_mutex_unlock(&data->forks[philo->right_fork]);
-	pthread_mutex_unlock(&data->forks[philo->left_fork]);
 }
 
-/**
- * The routine function executed by each philosopher thread.
- * The philosopher alternates between thinking, eating, and sleeping.
- * It checks if the simulation is over or if the philosopher has eaten
- * the required number of meals before proceeding with the actions.
- * Each action (think, eat, sleep) is accompanied by appropriate log messages.
- * The routine loops until the simulation ends or the meal count is met.
- *
- * @param arg Ptn to the philo struct (cast to void* for pthread compatibility).
- * @return NULL when the routine finishes.
- */
-void	*philos_routine(void *arg)
+void	put_down_forks(t_philo *philo)
 {
-	t_philo	*philo;
-	t_data	*data;
+	pthread_mutex_unlock(philo->left_fork);
+	print_action(philo, "dropped the left fork", NULL);
+	pthread_mutex_unlock(philo->right_fork);
+	print_action(philo, "dropped the right fork", NULL);
+}
 
-	philo = (t_philo *)arg;
-	data = philo->data;
-	while (1)
+void	is_eating(t_philo *philo)
+{
+	pick_up_forks(philo);
+	pthread_mutex_lock(&(philo->eating_mutex));
+	print_action(philo, "is eating", YELLOW);
+	philo->last_meal_time = get_time();
+	philo->meal_count++;
+	if (*(philo->meals_required) != -1)
 	{
-		pthread_mutex_lock(&data->simulation_mutex);
-		if (data->simulation_over)
+		if (philo->meal_count == *(philo->meals_required))
 		{
-			pthread_mutex_unlock(&data->simulation_mutex);
-			break ;
+			philo->is_full = 1;
+			pthread_mutex_unlock(&(philo->eating_mutex));
+			ft_usleep(philo->time_to_eat);
+			put_down_forks(philo);
+			print_action(philo, "is full", DEFAULT);
+			return ;
 		}
-		pthread_mutex_unlock(&data->simulation_mutex);
-		if (data->meals_required != -1
-			&& philo->meals_eaten >= data->meals_required)
-			break ;
-		printf("%zu %d is thinking\n", get_time_timestamp(), philo->id);
-		ft_usleep(1);
-		philo_eat(philo, data);
-		printf("%zu %d is sleeping\n", get_time_timestamp(), philo->id);
-		ft_usleep(data->time_to_sleep);
 	}
-	return (NULL);
+	pthread_mutex_unlock(&(philo->eating_mutex));
+	ft_usleep(philo->time_to_eat);
+	put_down_forks(philo);
+	print_action(philo, "finished eating", DEFAULT);
 }

@@ -6,141 +6,82 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:15:27 by angerard          #+#    #+#             */
-/*   Updated: 2024/11/26 17:26:01 by angerard         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:09:30 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-/**
- * Assigns the command line arguments to the simulation data structure.
- * Extracts the number of philos, time to die, time to eat, and time to sleep.
- * Optionally assigns the number of meals required if provided.
- * Ensures all values are positive and valid.
- *
- * @param data Pointer to the simulation data structure.
- * @param argc Number of command line arguments.
- * @param argv Array of command line arguments.
- * @return 0 on success, 1 if any argument is invalid or missing.
- */
-static int	assign_args(t_data *data, int argc, char **argv)
+int	init_philos(t_data *data, char *argv[], int index)
 {
-	data->philos_nbr = ft_atoi(argv[1]);
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	if (data->philos_nbr <= 0 || data->time_to_die < 0 || data->time_to_eat < 0
-		|| data->time_to_sleep < 0)
+	while (++index < data->nbr_philos)
 	{
-		printf("Error: arguments missing.\n");
-		return (1);
-	}
-	if (argc == 6)
-	{
-		data->meals_required = ft_atoi(argv[5]);
-		if (data->meals_required < 0)
+		data->philos[index].id = index + 1;
+		data->philos[index].left_fork = &(data->forks[index]);
+		if (index == data->nbr_philos - 1)
+			data->philos[index].right_fork = &(data->forks[0]);
+		else
+			data->philos[index].right_fork = &(data->forks[index + 1]);
+		if (pthread_mutex_init(&(data->philos[index].eating_mutex), NULL) != 0)
 		{
-			printf("Error: Invalid meal count.\n");
+			printf("Error: Mutex initialization failed!\n");
 			return (1);
 		}
-	}
-	else
-		data->meals_required = -1;
-	return (0);
-}
-
-/**
- * Allocates memory for the philosophers and forks arrays.
- * The number of philos and forks is based on the `philos_nbr` value.
- * Ensures that memory allocation is successful for both arrays.
- *
- * @param data Pointer to the simulation data structure.
- * @return 0 on success, 1 if memory allocation fails.
- */
-static int	allocate_memory(t_data *data)
-{
-	data->philos = malloc(sizeof(t_philo) * data->philos_nbr);
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->philos_nbr);
-	if (!data->philos || !data->forks)
-	{
-		free(data->philos);
-		free(data->forks);
-		printf("Error: Memory allocation failed.\n");
-		return (1);
+		data->philos[index].is_full = 0;
+		data->philos[index].meals_required = &(data->max_meals);
+		data->philos[index].print_mutex = &(data->print_mutex);
+		data->philos[index].death_lock = &(data->death_lock);
+		data->philos[index].is_dead = &(data->is_dead);
+		data->philos[index].time_to_die = ft_atoi(argv[2]);
+		data->philos[index].time_to_eat = ft_atoi(argv[3]);
+		data->philos[index].time_to_sleep = ft_atoi(argv[4]);
+		data->philos[index].last_meal_time = get_time();
 	}
 	return (0);
 }
 
-/**
- * Initializes the philosopher structures and assigns forks.
- * Each philosopher is given an ID, a left fork, and a right fork.
- * Also initializes the mutex for each fork.
- *
- * @param data Pointer to the simulation data structure.
- * @return 0 on successful initialization.
- */
-static int	initialize_philosophers(t_data *data)
+int	init_forks(t_data *data)
 {
-	int	i;
+	int	index;
 
-	i = 0;
-	while (i < data->philos_nbr)
+	index = 0;
+	while (index < data->nbr_philos)
 	{
-		data->philos[i].id = i + 1;
-		data->philos[i].left_fork = i;
-		data->philos[i].right_fork = (i + 1) % data->philos_nbr;
-		data->philos[i].meals_eaten = 0;
-		pthread_mutex_init(&data->forks[i], NULL);
-		pthread_mutex_init(&data->philo_mutex, NULL);
-		i++;
-	}
-	return (0);
-}
-
-/**
- * Frees the dynamically allocated memory and destroys the mutexes.
- * Destroys the mutexes for the forks and the simulation mutex.
- * Frees the memory allocated for the forks and philosophers arrays.
- *
- * @param data Pointer to the simulation data structure.
- */
-void	free_data(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	if (data->forks)
-	{
-		while (i < data->philos_nbr)
+		if (pthread_mutex_init(&(data->forks[index]), NULL) != 0)
 		{
-			pthread_mutex_destroy(&data->forks[i]);
-			i++;
+			printf("Error: Mutex initialization failed!\n");
+			return (1);
 		}
-		free(data->forks);
+		index++;
 	}
-	if (data->philos)
-		free(data->philos);
-	pthread_mutex_destroy(&data->simulation_mutex);
-	pthread_mutex_destroy(&data->philo_mutex);
+	return (0);
 }
 
-/**
- * Initializes the simulation data by assigning command line arguments,
- * allocating necessary memory, and initializing the philosopher structures.
- * Calls `assign_args` to validate and assign arguments, `allocate_memory`
- * to allocate memory for philosophers and forks, and
- * `initialize_philosophers` to set up each philosopher.
- *
- * @param data Pointer to the simulation data structure.
- * @param argc Number of command line arguments.
- * @param argv Array of command line arguments.
- * @return 0 on successful initialization, 1 on failure.
- */
-int	init_data(t_data *data, int argc, char **argv)
+int	init_data(t_data *data, int argc, char *argv[])
 {
-	if (assign_args(data, argc, argv) != 0)
+	data->nbr_philos = ft_atoi(argv[1]);
+	if (argc == 5)
+		data->max_meals = -1;
+	else
+		data->max_meals = ft_atoi(argv[5]);
+	data->is_dead = 0;
+	if (pthread_mutex_init(&(data->print_mutex), NULL) != 0)
+	{
+		printf("Error: Mutex initialization failed!\n");
 		return (1);
-	if (allocate_memory(data) != 0)
+	}
+	if (pthread_mutex_init(&(data->death_lock), NULL) != 0)
+	{
+		printf("Error: Mutex initialization failed!\n");
 		return (1);
-	return (initialize_philosophers(data));
+	}
+	data->philos = malloc(sizeof(t_philo) * data->nbr_philos);
+	data->forks = malloc(sizeof(pthread_mutex_t) * data->nbr_philos);
+	if (data->philos == NULL || data->forks == NULL)
+		return (1);
+	if (init_forks(data) == 1)
+		return (1);
+	if (init_philos(data, argv, -1) == 1)
+		return (1);
+	return (0);
 }

@@ -6,97 +6,71 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 11:44:33 by angerard          #+#    #+#             */
-/*   Updated: 2024/11/27 11:10:04 by angerard         ###   ########.fr       */
+/*   Updated: 2024/12/04 15:27:18 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-/**
- * Checks the state of a philo to determine if they have died or finished eating.
- * The fct locks the `philo_mutex` to safely check the philo's last meal time
- * and meal count. If the philos has not eaten within the allowed
- * time (time_to_die), the simul is ended. If a meal requirement is set and
- * the philos has eaten the required number of meals,
- * the finished philos count is incremented.
- *
- * @param philo Pointer to the philosopher structure.
- * @param data Pointer to the simulation data structure.
- */
-static void	check_philo_state(t_philo *philo, t_data *data)
+int	check_philo_status(t_data *data, int i, int *full_count)
 {
-	pthread_mutex_lock(&data->philo_mutex);
-	if (philo->last_meal_time && (get_time_timestamp()
-			- philo->last_meal_time) > (size_t)data->time_to_die)
+	if (data->max_meals == -1)
 	{
-		pthread_mutex_lock(&data->simulation_mutex);
-		data->simulation_over = 1;
-		pthread_mutex_unlock(&data->simulation_mutex);
-		pthread_mutex_unlock(&data->philo_mutex);
-		terminate_simulation(data, philo);
-		return ;
+		data->philos[i].is_full = 0;
+		return (0);
 	}
-	if (data->meals_required != -1
-		&& philo->meals_eaten >= data->meals_required)
+	if (data->philos[i].is_full == 1)
 	{
-		data->philos_finished++;
-		if (data->philos_finished == data->philos_nbr)
-		{
-			pthread_mutex_lock(&data->simulation_mutex);
-			data->simulation_over = 1;
-			pthread_mutex_unlock(&data->simulation_mutex);
-			printf("All philosophers have eaten %d meals\n",
-				data->meals_required);
-		}
+		*full_count = *full_count + 1;
+		data->philos[i].is_full = -1;
 	}
-	pthread_mutex_unlock(&data->philo_mutex);
+	if (*full_count >= data->nbr_philos)
+	{
+		print_action(&(data->philos[i]), "all are full!", GREEN);
+		pthread_mutex_lock(&(data->death_lock));
+		data->is_dead = 1;
+		pthread_mutex_unlock(&(data->death_lock));
+		return (1);
+	}
+	return (0);
 }
 
-/**
- * Monitors the state of all philos to determine if any have died
- * or if all have finished eating. Iterates through each philo, checking if
- * they have exceeded the time to die or met the required meal count.
- * If all philos have finished the required number of meals,the simulation ends.
- *
- * @param data Pointer to the simulation data structure.
- */
-static void	check_philosophers(t_data *data)
+int	check_philo_death(t_data *data, int i)
 {
-	int	i;
-
-	i = 0;
-	while (i < data->philos_nbr)
+	if (data->philos[i].is_full == 0 && get_time()
+		- data->philos[i].last_meal_time > data->philos[i].time_to_die)
 	{
-		check_philo_state(&data->philos[i], data);
-		i++;
+		print_action(&(data->philos[i]), "died!", RED);
+		pthread_mutex_lock(&(data->death_lock));
+		data->is_dead = 1;
+		pthread_mutex_unlock(&(data->death_lock));
+		return (1);
 	}
+	return (0);
 }
 
-/**
- * The monitoring routine for the simulation, executed by a separate thread.
- * Continuously checks the state of all philos to detect if the simul should end.
- * It monitors for either a philo dying or all philo completing their meals.
- * The loop terminates when `simulation_over` is set to 1.
- *
- * @param arg Ptn to the data struct (cast to void* for pthread compatibility).
- * @return NULL when monitoring finishes.
- */
-void	*monitor_philos(void *arg)
+void	*monitor_routine(void *ptr)
 {
 	t_data	*data;
+	int		i;
+	int		full_count;
 
-	data = (t_data *)arg;
+	data = (t_data *)ptr;
+	full_count = 0;
+	i = 0;
 	while (1)
 	{
-		pthread_mutex_lock(&data->simulation_mutex);
-		if (data->simulation_over)
+		pthread_mutex_lock(&(data->philos[i].eating_mutex));
+		if (check_philo_death(data, i) == 1 || check_philo_status(data, i,
+				&full_count) == 1)
 		{
-			pthread_mutex_unlock(&data->simulation_mutex);
-			break ;
+			pthread_mutex_unlock(&(data->philos[i].eating_mutex));
+			return (NULL);
 		}
-		pthread_mutex_unlock(&data->simulation_mutex);
-		check_philosophers(data);
-		ft_usleep(5);
+		pthread_mutex_unlock(&(data->philos[i].eating_mutex));
+		i++;
+		if (i == data->nbr_philos)
+			i = 0;
 	}
-	return (NULL);
+	return (ptr);
 }
