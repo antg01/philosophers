@@ -6,7 +6,7 @@
 /*   By: angerard <angerard@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 15:19:55 by angerard          #+#    #+#             */
-/*   Updated: 2024/12/04 14:54:49 by angerard         ###   ########.fr       */
+/*   Updated: 2024/12/04 16:23:01 by angerard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,37 @@ static int	validate_args(int argc, char **argv)
 	return (1);
 }
 
+static int	check_time_values(char **argv)
+{
+	int	time_value;
+	int	i;
+
+	i = 2;
+	while (i <= 4)
+	{
+		time_value = ft_atoi(argv[i]);
+		if (time_value < 60)
+		{
+			printf("Error: Arg %d must be at least 60ms.\n", i);
+			return (0);
+		}
+		if (time_value > INT_MAX)
+		{
+			printf("Error: Arg %d exceeds the max int value.\n", i);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
 int	check_args(int argc, char **argv)
 {
 	if (!validate_args(argc, argv))
 		return (0);
 	if (!check_philos_nbr(argv))
+		return (0);
+	if (!check_time_values(argv))
 		return (0);
 	return (1);
 }
